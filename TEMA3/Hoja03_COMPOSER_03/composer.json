@@ -1,0 +1,24 @@
+{
+    "name": "daw2/composer03",
+    "description": "Tercer ejercicio de composer",
+    "type":"project",
+    "autoload": {
+        "psr-4": {
+            "MiAplicacion\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "DAW2",
+            "email": "lucia.ferrerasfernandez-marcote@iesmiguelherrero.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "hackzilla/password-generator": "^1.6"
+    },
+    "scripts": {
+        "start": "php -S localhost:8001 -t public"
+    }
+        
+}

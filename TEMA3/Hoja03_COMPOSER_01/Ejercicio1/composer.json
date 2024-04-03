@@ -1,0 +1,13 @@
+{
+    "name": "composer/ej01",
+    "description": "Primer ejercicio de composer",
+    "authors": [
+        {
+            "name": "DAW2"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "brick/math": "*"
+    }
+}

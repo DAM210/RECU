@@ -1,0 +1,21 @@
+{
+    "name": "lucia/composer2",
+    "description": "ejercicio1 de composer",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "MiProyecto\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "DAM210",
+            "email": "lucia.ferrerasfernandez-marcote@iesmiguelherrero.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "hackzilla/password-generator": "^1.6",
+        "phpmailer/phpmailer": "^6.9"
+    }
+}

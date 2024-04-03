@@ -1,0 +1,13 @@
+{
+    "name": "Hoja03_COMPOSER_01/Ejercicio2",
+    "description": "Segundo ejercicio de composer",
+    "authors": [
+        {
+            "name": "DAW2"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "brick/math": "^0.11.0"
+    }
+}
