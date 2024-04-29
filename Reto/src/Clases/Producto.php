@@ -4,21 +4,21 @@ namespace Reto\Clases;
 
 class Producto
 {
-    private $codigo;
-    private $precio;
-    private $nombre;
-    private $descripcion;
-    private $familiaId;
-    private $imagenId;
+    private ?int $codigo;
+    private float $precio;
+    private string $nombre;
+    private string $descripcion;
+    private Familia $familia;
+    private Imagen $imagen;
 
-    public function __construct($codigo, $precio, $nombre, $descripcion, $familiaId, $imagenId)
+    public function __construct(int $codigo = null, float $precio, string $nombre, string $descripcion, Familia $familia, Imagen $imagen)
     {
         $this->codigo = $codigo;
         $this->precio = $precio;
         $this->nombre = $nombre;
         $this->descripcion = $descripcion;
-        $this->familiaId = $familiaId;
-        $this->imagenId = $imagenId;
+        $this->familia = $familia;
+        $this->imagen = $imagen;
     }
 
     public function getCodigo()
@@ -41,16 +41,13 @@ class Producto
         return $this->descripcion;
     }
 
-    public function getFamiliaId()
+    public function getFamilia()
     {
-        return $this->familiaId;
+        return $this->familia;
     }
 
-    public function getImagenId()
+    public function getImagen()
     {
-        return $this->imagenId;
+        return $this->imagen;
     }
-
-    // Métodos adicionales para acceder y manipular atributos
 }
-?>

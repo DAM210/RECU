@@ -1,6 +1,6 @@
 <?php
 
-namespace Recu\Clases;
+namespace Reto\Clases;
 
 use Reto\Clases\Producto;
 use Reto\Clases\BaseDatos;
@@ -43,9 +43,8 @@ final class PDOProducto implements IntRepoProducto
                 $precio = $producto->getPrecio();
                 $descripcion = $producto->getDescripcion();
                 $imagenNombre = $producto->getImagen()->getNombre();
-                $imagenUrl = $producto->getImagen()->getUrl();
-                $familiaId = $producto->getFamilia()->getId(); // Suponiendo que el método para obtener el ID de la familia sea getId()
-
+                $familia = $producto->getFamilia(); // Obtener el objeto Familia
+                $familiaId = $familia->getId(); // Obtener el ID de la familia
                 try {
                     $conexion->beginTransaction();
 
@@ -100,12 +99,12 @@ final class PDOProducto implements IntRepoProducto
         if (!is_null($conexion)) {
             try {
                 // SELECT de todos los productos
-                $queryListarProductos = $conexion->query('SELECT p.id, p.nombre, p.precio, p.descripcion, p.familia_id, p.imagen_id, i.id AS idImagen, i.nombre AS nombreImagen, i.ruta AS rutaImagen FROM productos p INNER JOIN imagenes i ON p.imagen_id = i.id INNER JOIN familia f ON p.familia_id = f.id');
+                $queryListarProductos = $conexion->query('SELECT p.codigo, p.nombre, p.precio, p.descripcion, p.familia_id, p.imagen_id, i.id AS idImagen, i.nombre AS nombreImagen, i.ruta AS rutaImagen FROM productos p INNER JOIN imagenes i ON p.imagen_id = i.id INNER JOIN familias f ON p.familia_id = f.id');
 
                 // Rellenamos el array creando objetos Producto por cada registro obtenido
                 while ($producto = $queryListarProductos->fetch(PDO::FETCH_OBJ)) {
                     // Creamos un objeto Producto con los datos del registro
-                    $productoObj = new Producto($producto->codigo, $producto->nombre, $producto->precio, $producto->descripcion, $producto->familia_id, $producto->imagen_id);
+                    $productoObj = new Producto($producto->codigo, $producto->precio, $producto->nombre, $producto->descripcion, $producto->familia_id, $producto->imagen_id);
 
                     // Añadimos el objeto Producto al array
                     $productos[] = $productoObj;
@@ -133,7 +132,7 @@ final class PDOProducto implements IntRepoProducto
             if ($this->crearTablas()) {
                 try {
                     // SELECT de un producto por su ID, obtendremos solo un registro
-                    $queryListarProducto = $conexion->prepare('SELECT p.id AS idProducto, p.nombre, p.precio, p.descripcion, p.familia_id, p.imagen_id, i.id AS idImagen, i.nombre AS nombreImagen, i.ruta AS rutaImagen FROM productos p INNER JOIN imagenes i ON p.imagen_id = i.id INNER JOIN familia f ON p.familia_id = f.id WHERE id = :idProducto');
+                    $queryListarProducto = $conexion->prepare('SELECT p.id AS idProducto, p.nombre, p.precio, p.descripcion, p.familia_id, p.imagen_id, i.id AS idImagen, i.nombre AS nombreImagen, i.ruta AS rutaImagen FROM productos p INNER JOIN imagenes i ON p.imagen_id = i.id INNER JOIN familias f ON p.familia_id = f.id WHERE id = :idProducto');
                     $queryListarProducto->bindParam(':idProducto', $id);
                     $queryListarProducto->execute();
 
@@ -161,50 +160,50 @@ final class PDOProducto implements IntRepoProducto
      * @return bool Devuelve true si el producto se borra correctamente, false en caso contrario.
      */
     public function borrar(int $id): bool
-{
-    $conexion = $this->getConexion();
-    $resultado = false;
+    {
+        $conexion = $this->getConexion();
+        $resultado = false;
 
-    if (!is_null($conexion)) {
-        if ($this->crearTablas()) {
-            try {
-                $conexion->beginTransaction();
+        if (!is_null($conexion)) {
+            if ($this->crearTablas()) {
+                try {
+                    $conexion->beginTransaction();
 
-                // Obtener la información de la imagen antes de borrar el producto
-                $queryInfoImagen = $conexion->prepare('SELECT imagen_id FROM productos WHERE id = :idProducto');
-                $queryInfoImagen->bindParam(':idProducto', $id);
-                $queryInfoImagen->execute();
-                $imagen_id = $queryInfoImagen->fetchColumn();
+                    // Obtener la información de la imagen antes de borrar el producto
+                    $queryInfoImagen = $conexion->prepare('SELECT imagen_id FROM productos WHERE id = :idProducto');
+                    $queryInfoImagen->bindParam(':idProducto', $id);
+                    $queryInfoImagen->execute();
+                    $imagen_id = $queryInfoImagen->fetchColumn();
 
-                // DELETE del producto en la tabla productos por su ID
-                $queryBorraProducto = $conexion->prepare('DELETE FROM productos WHERE id = :idProducto');
-                $queryBorraProducto->bindParam(':idProducto', $id);
-                $queryBorraProducto->execute();
+                    // DELETE del producto en la tabla productos por su ID
+                    $queryBorraProducto = $conexion->prepare('DELETE FROM productos WHERE id = :idProducto');
+                    $queryBorraProducto->bindParam(':idProducto', $id);
+                    $queryBorraProducto->execute();
 
-                // Borra la imagen asociada al producto
-                if ($queryBorraProducto->rowCount() == 1) {
-                    $queryBorraImagen = $conexion->prepare('DELETE FROM imagenes WHERE id = :imagen_id');
-                    $queryBorraImagen->bindParam(':imagen_id', $imagen_id);
-                    $queryBorraImagen->execute();
+                    // Borra la imagen asociada al producto
+                    if ($queryBorraProducto->rowCount() == 1) {
+                        $queryBorraImagen = $conexion->prepare('DELETE FROM imagenes WHERE id = :imagen_id');
+                        $queryBorraImagen->bindParam(':imagen_id', $imagen_id);
+                        $queryBorraImagen->execute();
 
-                    if ($queryBorraImagen->rowCount() == 1) {
-                        $conexion->commit();
-                        $resultado = true;
+                        if ($queryBorraImagen->rowCount() == 1) {
+                            $conexion->commit();
+                            $resultado = true;
+                        } else {
+                            throw new PDOException('Error al borrar imagen asociada al producto. Revirtiendo cambios.');
+                        }
                     } else {
-                        throw new PDOException('Error al borrar imagen asociada al producto. Revirtiendo cambios.');
+                        throw new PDOException('Error al borrar producto. Revirtiendo cambios.');
                     }
-                } else {
-                    throw new PDOException('Error al borrar producto. Revirtiendo cambios.');
+                } catch (PDOException $e) {
+                    $conexion->rollBack();
+                    echo '<p>' . $e->getMessage() . '</p>';
                 }
-            } catch (PDOException $e) {
-                $conexion->rollBack();
-                echo '<p>' . $e->getMessage() . '</p>';
             }
         }
-    }
 
-    return $resultado;
-}
+        return $resultado;
+    }
 
 
     /**
@@ -231,15 +230,17 @@ final class PDOProducto implements IntRepoProducto
 
                 // Creación tabla productos
                 $conexion->query('
-                    CREATE TABLE IF NOT EXISTS productos (
-                        id INT NOT NULL AUTO_INCREMENT,
-                        nombre VARCHAR(100) NOT NULL,
-                        precio DECIMAL(10,2) NOT NULL,
-                        descripcion TEXT NOT NULL,
-                        imagen_id INT NOT NULL,
-                        PRIMARY KEY (id),
-                        FOREIGN KEY (imagen_id) REFERENCES imagenes(id) ON DELETE CASCADE ON UPDATE CASCADE
-                    );
+                CREATE TABLE IF NOT EXISTS productos (
+                    codigo int(11) NOT NULL AUTO_INCREMENT,
+                    precio float NOT NULL,
+                    nombre varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
+                    descripcion varchar(1000) COLLATE utf8mb4_spanish2_ci NOT NULL,
+                    familia_id int(11) NOT NULL,
+                    imagen_id int(11) NOT NULL, -- Nueva columna para la imagen
+                    PRIMARY KEY (`codigo`),
+                    KEY `fk_productos_familias` (`familia_id`),
+                    CONSTRAINT `fk_productos_familias` FOREIGN KEY (`familia_id`) REFERENCES `familias` (`id`) ON UPDATE CASCADE,
+                    CONSTRAINT `fk_productos_imagenes` FOREIGN KEY (`imagen_id`) REFERENCES `imagenes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE -- Nueva restricción de clave externa
                 ');
 
                 // Llegado a este punto si no ha habido ninguna excepción damos el resultado como true

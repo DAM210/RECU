@@ -4,10 +4,10 @@ namespace Reto\Clases;
 
 class Familia
 {
-    private $id;
-    private $nombre;
+    private int $id;
+    private string $nombre;
 
-    public function __construct($id, $nombre)
+    public function __construct(int $id, string $nombre)
     {
         $this->id = $id;
         $this->nombre = $nombre;

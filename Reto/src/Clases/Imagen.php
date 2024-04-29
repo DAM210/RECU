@@ -3,11 +3,11 @@
 namespace Reto\Clases;
 
 class Imagen {
-    private $id;
-    private $nombre;
-    private $ruta;
+    private int $id;
+    private string $nombre;
+    private string $ruta;
 
-    public function __construct($id, $nombre, $ruta) {
+    public function __construct(int $id, string $nombre, string $ruta) {
         $this->id = $id;
         $this->nombre = $nombre;
         $this->ruta = $ruta;
@@ -24,6 +24,4 @@ class Imagen {
     public function getRuta() {
         return $this->ruta;
     }
-
-    // Métodos adicionales para acceder y manipular atributos
 }

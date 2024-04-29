@@ -2,10 +2,10 @@
 namespace Reto\Clases;
 
 class Usuario {
-    private $usuario;
-    private $password;
+    private string $usuario;
+    private string $password;
 
-    public function __construct($usuario, $password) {
+    public function __construct(string $usuario, string $password) {
         $this->usuario = $usuario;
         $this->password = $password;
     }

@@ -1,73 +1,64 @@
-<!DOCTYPE html>
-<html lang="es">
+<?php
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Procesa</title>
-</head>
+use function Reto\Funciones\{
+    validarRequerido,
+    validarNumerico,
+    validarFormatoImagen,
+    validarSubidaFichero,
+    moverFicheroSubido,
+    limpiarEntrada,
+    redireccionar
+};
 
-<body>
-    <?php
-    require_once dirname(__DIR__) . '/vendor/autoload.php';
+use Reto\Clases\Familia;
+use Reto\Clases\Producto;
+use Reto\Clases\Produ;
+use Reto\Clases\Imagen;
+use Reto\Clases\PDOProducto;
 
-    use function Reto\Funciones\{
-        validarRequerido,
-        validarNumerico,
-        validarLongitud,
-        validarFormatoImagen,
-        validarSubidaFichero,
-        moverFicheroSubido,
-        limpiarEntrada,
-        redireccionar
-    };
+if (isset($_POST['enviar'])) {
+    // Validar que los campos no estén vacíos
+    if (!validarRequerido($_FILES['fichero']['name'])) redireccionar('index.php?error=1');
 
-    use Ejercicio1\Clases\GrupoRock;
-    use Ejercicio1\Clases\Imagen;
-    use Ejercicio1\Clases\Grupo;
-    use Ejercicio1\Clases\PDOGrupo;
+    foreach ($_POST as $clave => $valor) {
+        if (!validarRequerido($valor)) redireccionar('index.php?error=1');
+    }
 
-    if (isset($_POST['enviar'])) {
-        // Validar que los campos no estén vacíos
-        if (!validarRequerido($_FILES['fichero']['name'])) redireccionar('index.php?error=1');
+    // Validar el precio
+    if (!validarNumerico($_POST['precio'])) redireccionar('index.php?error=4');
 
-        foreach ($_POST as $clave => $valor) {
-            if (!validarRequerido($valor)) redireccionar('index.php?error=1');
-        }
+    // Validar formatos de imagen
+    if (!validarFormatoImagen($_FILES['fichero']['type'])) redireccionar('index.php?error=3');
 
-        // Validar el año
-        if (!validarNumerico($_POST['anoFundacion'])) redireccionar('index.php?error=4');
-        if (!validarLongitud($_POST['anoFundacion'], 4)) redireccionar('index.php?error=4');
+    // Validar la subida de la imagen
+    if (validarSubidaFichero($_FILES)) {
+        // Asignar un ID único al nombre de la imagen y sustituir espacios por '_' si los tuviese
+        $_FILES['fichero']['name'] = str_replace(' ', '_', uniqid() . '-' . $_FILES['fichero']['name']);
 
-        // Validar formatos imagen
-        if (!validarFormatoImagen($_FILES['fichero']['type'])) redireccionar('index.php?error=3');
+        // Mover el fichero imagen a la ubicación img
+        if (moverFicheroSubido($_FILES)) {
+            limpiarEntrada();
 
-        // Validar la subida de la imagen
-        if (validarSubidaFichero($_FILES)) {
-            // Asignar un ID único al nombre de la imagen y sustituir espacios por '_' si los tuviese
-            $_FILES['fichero']['name'] = str_replace(' ', '_', uniqid() . '-' . $_FILES['fichero']['name']);
+            // Antes de crear el objeto Producto, asegurémonos de que $precio sea un float
+            $precio = str_replace(',', '.', $_POST['precio']);
+            $precio = floatval($precio);
 
-            // Movemos el fichero imagen a la ubicación img
-            if (moverFicheroSubido($_FILES)) {
-                limpiarEntrada();
+            // Crear el producto en la base de datos
+            $imagen = new Imagen($_POST['imagen_id'], $_FILES['fichero']['name'], '/img/' . $_FILES['fichero']['name']);
+            $familia = new Familia($_POST['familia_id'], $_POST['nombre']);
 
-                // Creación del grupo en base de datos
-                $imagen = new Imagen($_FILES['fichero']['name'], '/img/' . $_FILES['fichero']['name']);
-
-                if ((new Grupo(new PDOGrupo()))->crearGrupo(new GrupoRock($_POST['nombreGrupo'], $_POST['anoFundacion'], $imagen, $_POST['historia']))) {
-                    redireccionar('index.php?success=1'); // El grupo ha sido dado de alta correctamente
-                } else {
-                    unlink(dirname(__DIR__) . '/public/img/' . $_FILES['fichero']['name']);
-                    redireccionar('index.php?error=5'); // No se ha podido guardar el grupo en base de datos
-                }
+            if ((new Produ(new PDOProducto()))->crearProducto(new Producto(null, $precio, $_POST['nombre'], $_POST['descripcion'], $familia, $imagen))) {
+                redireccionar('index.php?success=1'); // El producto ha sido dado de alta correctamente
             } else {
-                redireccionar('index.php?error=2'); // No se puede procesar el archivo
+                unlink(__DIR__ . '/public/img/' . $_FILES['fichero']['name']);
+                redireccionar('index.php?error=5'); // No se ha podido guardar el producto en base de datos
             }
         } else {
             redireccionar('index.php?error=2'); // No se puede procesar el archivo
         }
+    } else {
+        redireccionar('index.php?error=2'); // No se puede procesar el archivo
     }
-    ?>
-</body>
-
-</html>
+}
+?>
