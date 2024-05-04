@@ -99,12 +99,25 @@ final class PDOProducto implements IntRepoProducto
         if (!is_null($conexion)) {
             try {
                 // SELECT de todos los productos
-                $queryListarProductos = $conexion->query('SELECT p.codigo, p.nombre, p.precio, p.descripcion, p.familia_id, p.imagen_id, i.id AS idImagen, i.nombre AS nombreImagen, i.ruta AS rutaImagen FROM productos p INNER JOIN imagenes i ON p.imagen_id = i.id INNER JOIN familias f ON p.familia_id = f.id');
+                $queryListarProductos = $conexion->query('SELECT p.codigo, p.nombre, p.precio, p.descripcion, p.familia_id, p.imagen_id, i.id AS idImagen, i.nombre AS nombreImagen, i.ruta AS rutaImagen, f.id AS familia_id FROM productos p INNER JOIN imagenes i ON p.imagen_id = i.id INNER JOIN familias f ON p.familia_id = f.id');
 
                 // Rellenamos el array creando objetos Producto por cada registro obtenido
                 while ($producto = $queryListarProductos->fetch(PDO::FETCH_OBJ)) {
+                    // Creamos un objeto Familia con los datos de la familia obtenidos del registro
+                    $familia = new Familia($producto->familia_id, ''); // La descripción no se usa en este contexto
+
+                    // Creamos un objeto Imagen con los datos de la imagen obtenidos del registro
+                    $imagen = new Imagen($producto->idImagen, $producto->nombreImagen, $producto->rutaImagen);
+
                     // Creamos un objeto Producto con los datos del registro
-                    $productoObj = new Producto($producto->codigo, $producto->precio, $producto->nombre, $producto->descripcion, $producto->familia_id, $producto->imagen_id);
+                    $productoObj = new Producto(
+                        $producto->codigo,
+                        $producto->precio,
+                        $producto->nombre,
+                        $producto->descripcion,
+                        $familia, // Pasamos el objeto Familia en lugar del ID directamente
+                        $imagen
+                    );
 
                     // Añadimos el objeto Producto al array
                     $productos[] = $productoObj;
@@ -117,40 +130,60 @@ final class PDOProducto implements IntRepoProducto
         return $productos;
     }
 
+
+
     /**
      * Obtiene un producto por su ID.
      *
      * @param int $id ID del producto a buscar.
      * @return Producto|null Devuelve el producto si se encuentra, o null si no se encuentra.
      */
-    public function listarPorId(int $id): Producto|null
-    {
-        $conexion = $this->getConexion();
-        $productoObj = null;
+    public function listarPorId(int $id): ?Producto
+{
+    $conexion = $this->getConexion();
 
-        if (!is_null($conexion)) {
-            if ($this->crearTablas()) {
-                try {
-                    // SELECT de un producto por su ID, obtendremos solo un registro
-                    $queryListarProducto = $conexion->prepare('SELECT p.id AS idProducto, p.nombre, p.precio, p.descripcion, p.familia_id, p.imagen_id, i.id AS idImagen, i.nombre AS nombreImagen, i.ruta AS rutaImagen FROM productos p INNER JOIN imagenes i ON p.imagen_id = i.id INNER JOIN familias f ON p.familia_id = f.id WHERE id = :idProducto');
-                    $queryListarProducto->bindParam(':idProducto', $id);
-                    $queryListarProducto->execute();
-
-                    $producto = $queryListarProducto->fetch(PDO::FETCH_OBJ);
-
-                    // Creamos el producto obtenido
-                    if ($producto) {
-                        $productoObj = new Producto($producto->idProducto, $producto->nombre, $producto->precio, $producto->descripcion, $producto->familia_id, $producto->imagen_id);
-                    }
-                } catch (PDOException $e) {
-                    $productoObj = null;
-                    echo '<p>' . $e->getMessage() . '</p>';
-                }
-            }
-        }
-
-        return $productoObj;
+    if (is_null($conexion)) {
+        throw new PDOException('No se pudo establecer la conexión a la base de datos.');
     }
+
+    try {
+        $queryListarProducto = $conexion->prepare('SELECT p.codigo, p.nombre, p.precio, p.descripcion, f.id AS familia_id, f.nombre AS nombre_familia, i.id AS imagen_id, i.nombre AS nombre_imagen, i.ruta AS rutaImagen 
+                                        FROM productos p 
+                                        INNER JOIN familias f ON p.familia_id = f.id 
+                                        INNER JOIN imagenes i ON p.imagen_id = i.id 
+                                        WHERE p.codigo = :id');
+
+        $queryListarProducto->bindParam(':id', $id, PDO::PARAM_INT);
+        $queryListarProducto->execute();
+
+        if ($queryListarProducto->rowCount() > 0) {
+            $producto = $queryListarProducto->fetch(PDO::FETCH_ASSOC);
+
+            $imagenRuta = $producto['rutaImagen'] ?? '';
+
+            // Crear una instancia de Imagen con la ruta obtenida
+            $imagen = new Imagen(0, '', $imagenRuta);
+
+            // Crear una instancia de Familia con el ID y el nombre obtenidos
+            $familia = new Familia($producto['familia_id'], $producto['nombre_familia']);
+
+            // Crear una instancia de Producto con los datos obtenidos
+            return new Producto(
+                $producto['codigo'],
+                $producto['precio'],
+                $producto['nombre'],
+                $producto['descripcion'],
+                $familia,
+                $imagen // Aquí pasamos la instancia de Imagen creada
+            );
+        } else {
+            return null;
+        }
+    } catch (PDOException $e) {
+        throw new PDOException('Error al obtener el producto: ' . $e->getMessage());
+    }
+}
+
 
 
     /**

@@ -24,7 +24,9 @@ $productos = $produ->listarProductos();
             border-collapse: collapse;
         }
 
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid black;
             padding: 8px;
         }
@@ -55,8 +57,14 @@ $productos = $produ->listarProductos();
                     <td><?php echo $producto->getNombre(); ?></td>
                     <td><?php echo $producto->getPrecio(); ?></td>
                     <td>
-                        <a href="ver_producto.php?id=<?php echo $producto->getCodigo(); ?>">Ver</a> |
-                        <a href="borrar_producto.php?id=<?php echo $producto->getCodigo(); ?>">Borrar</a>
+                        <form action="detalle.php" method="POST">
+                            <input type="hidden" name="id" value="<?php echo $producto->getCodigo(); ?>">
+                            <button type="submit" class="btn">Más información</button>
+                        </form>
+                        <form action="formularioAlta.php" method="POST">
+                            <input type="hidden" name="id" value="<?php echo $producto->getCodigo(); ?>">
+                            <button type="submit" class="btn">Borrar</button>
+                        </form>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -64,7 +72,7 @@ $productos = $produ->listarProductos();
     </table>
 
     <!-- Enlace para crear un nuevo producto -->
-    <a href="crear_producto.php">Crear Nuevo Producto</a>
+    <a href="formularioAlta.php">Crear Nuevo Producto</a>
 </body>
 
 </html>
