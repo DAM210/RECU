@@ -17,24 +17,8 @@ $productos = $produ->listarProductos();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/estilo.css">
     <title>Listado de Productos</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table,
-        th,
-        td {
-            border: 1px solid black;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
 </head>
 
 <body>
@@ -61,7 +45,7 @@ $productos = $produ->listarProductos();
                             <input type="hidden" name="id" value="<?php echo $producto->getCodigo(); ?>">
                             <button type="submit" class="btn">Más información</button>
                         </form>
-                        <form action="formularioAlta.php" method="POST">
+                        <form action="borrar.php" method="POST">
                             <input type="hidden" name="id" value="<?php echo $producto->getCodigo(); ?>">
                             <button type="submit" class="btn">Borrar</button>
                         </form>

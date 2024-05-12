@@ -1,6 +1,6 @@
 <?php
 
-namespace Recu\Clases;
+namespace Reto\Clases;
 
 use Reto\Interfaces\IntRepoProducto;
 
@@ -52,7 +52,7 @@ class CestaCompra
     {
         // Recuperar la cesta de la sesión del usuario
         if (isset($_SESSION['cesta'])) {
-            $this->productos = unserialize($_SESSION['cesta']);
+            return $this->productos = unserialize($_SESSION['cesta']);
         }
     }
 

@@ -3,7 +3,7 @@
         'name' => 'usuario/reto',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '95b8f57a55c565587e3bd4644749433ef223efe4',
+        'reference' => '315dfeabb3f561204c2d92594f26dcf3b4b44300',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -58,7 +58,7 @@
         'usuario/reto' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '95b8f57a55c565587e3bd4644749433ef223efe4',
+            'reference' => '315dfeabb3f561204c2d92594f26dcf3b4b44300',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

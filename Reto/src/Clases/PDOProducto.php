@@ -35,51 +35,49 @@ final class PDOProducto implements IntRepoProducto
         $resultado = false;
 
         if (!is_null($conexion)) {
-            if ($this->crearTablas()) {
-                // Datos del objeto Producto pasado por parámetro al método.
-                // No recogemos el ID de la imagen ni de la familia ya que aún no lo tienen debido a que no se ha insertado en la BD.
-                // Los campos ID de la imagen y de la familia son autoincrementales en la BD.
-                $nombre = $producto->getNombre();
-                $precio = $producto->getPrecio();
-                $descripcion = $producto->getDescripcion();
-                $imagenNombre = $producto->getImagen()->getNombre();
-                $familia = $producto->getFamilia(); // Obtener el objeto Familia
-                $familiaId = $familia->getId(); // Obtener el ID de la familia
-                try {
-                    $conexion->beginTransaction();
+            // Datos del objeto Producto pasado por parámetro al método.
+            // No recogemos el ID de la imagen ni de la familia ya que aún no lo tienen debido a que no se ha insertado en la BD.
+            // Los campos ID de la imagen y de la familia son autoincrementales en la BD.
+            $nombre = $producto->getNombre();
+            $precio = $producto->getPrecio();
+            $descripcion = $producto->getDescripcion();
+            $imagenNombre = $producto->getImagen()->getNombre();
+            $familia = $producto->getFamilia(); // Obtener el objeto Familia
+            $familiaId = $familia->getId(); // Obtener el ID de la familia
+            try {
+                $conexion->beginTransaction();
 
-                    // INSERT en la tabla imagenes
-                    $queryInsertaImagen = $conexion->prepare('INSERT INTO imagenes (nombre, url) VALUES (:nombre, :url)');
-                    $queryInsertaImagen->bindParam(':nombre', $imagenNombre);
-                    $queryInsertaImagen->bindParam(':url', $imagenUrl);
-                    $queryInsertaImagen->execute();
+                // INSERT en la tabla imagenes
+                $queryInsertaImagen = $conexion->prepare('INSERT INTO imagenes (nombre, url) VALUES (:nombre, :url)');
+                $queryInsertaImagen->bindParam(':nombre', $imagenNombre);
+                $queryInsertaImagen->bindParam(':url', $imagenUrl);
+                $queryInsertaImagen->execute();
 
-                    if ($queryInsertaImagen->rowCount() == 1) {
-                        // Recogemos el id de imagen insertado para usarlo en la inserción a la tabla productos
-                        $imagenId = $conexion->lastInsertId();
+                if ($queryInsertaImagen->rowCount() == 1) {
+                    // Recogemos el id de imagen insertado para usarlo en la inserción a la tabla productos
+                    $imagenId = $conexion->lastInsertId();
 
-                        // INSERT en la tabla productos
-                        $queryCrearProducto = $conexion->prepare('INSERT INTO productos (nombre, precio, descripcion, imagen_id, familia_id) VALUES (:nombre, :precio, :descripcion, :imagenId, :familiaId)');
-                        $queryCrearProducto->bindParam(':nombre', $nombre);
-                        $queryCrearProducto->bindParam(':precio', $precio);
-                        $queryCrearProducto->bindParam(':descripcion', $descripcion);
-                        $queryCrearProducto->bindParam(':imagenId', $imagenId);
-                        $queryCrearProducto->bindParam(':familiaId', $familiaId);
-                        $queryCrearProducto->execute();
+                    // INSERT en la tabla productos
+                    $queryCrearProducto = $conexion->prepare('INSERT INTO productos (nombre, precio, descripcion, imagen_id, familia_id) VALUES (:nombre, :precio, :descripcion, :imagenId, :familiaId)');
+                    $queryCrearProducto->bindParam(':nombre', $nombre);
+                    $queryCrearProducto->bindParam(':precio', $precio);
+                    $queryCrearProducto->bindParam(':descripcion', $descripcion);
+                    $queryCrearProducto->bindParam(':imagenId', $imagenId);
+                    $queryCrearProducto->bindParam(':familiaId', $familiaId);
+                    $queryCrearProducto->execute();
 
-                        if ($queryCrearProducto->rowCount() == 1) {
-                            $conexion->commit();
-                            $resultado = true;
-                        } else {
-                            throw new PDOException('Error al insertar producto. Revirtiendo cambios.');
-                        }
+                    if ($queryCrearProducto->rowCount() == 1) {
+                        $conexion->commit();
+                        $resultado = true;
                     } else {
-                        throw new PDOException('Error al insertar la imagen. Revirtiendo cambios.');
+                        throw new PDOException('Error al insertar producto. Revirtiendo cambios.');
                     }
-                } catch (PDOException $e) {
-                    $conexion->rollBack();
-                    echo '<p>' . $e->getMessage() . '</p>';
+                } else {
+                    throw new PDOException('Error al insertar la imagen. Revirtiendo cambios.');
                 }
+            } catch (PDOException $e) {
+                $conexion->rollBack();
+                echo '<p>' . $e->getMessage() . '</p>';
             }
         }
 
@@ -104,7 +102,7 @@ final class PDOProducto implements IntRepoProducto
                 // Rellenamos el array creando objetos Producto por cada registro obtenido
                 while ($producto = $queryListarProductos->fetch(PDO::FETCH_OBJ)) {
                     // Creamos un objeto Familia con los datos de la familia obtenidos del registro
-                    $familia = new Familia($producto->familia_id, ''); // La descripción no se usa en este contexto
+                    $familia = new Familia($producto->familia_id, '');
 
                     // Creamos un objeto Imagen con los datos de la imagen obtenidos del registro
                     $imagen = new Imagen($producto->idImagen, $producto->nombreImagen, $producto->rutaImagen);
@@ -139,50 +137,50 @@ final class PDOProducto implements IntRepoProducto
      * @return Producto|null Devuelve el producto si se encuentra, o null si no se encuentra.
      */
     public function listarPorId(int $id): ?Producto
-{
-    $conexion = $this->getConexion();
+    {
+        $conexion = $this->getConexion();
 
-    if (is_null($conexion)) {
-        throw new PDOException('No se pudo establecer la conexión a la base de datos.');
-    }
+        if (is_null($conexion)) {
+            throw new PDOException('No se pudo establecer la conexión a la base de datos.');
+        }
 
-    try {
-        $queryListarProducto = $conexion->prepare('SELECT p.codigo, p.nombre, p.precio, p.descripcion, f.id AS familia_id, f.nombre AS nombre_familia, i.id AS imagen_id, i.nombre AS nombre_imagen, i.ruta AS rutaImagen 
+        try {
+            $queryListarProducto = $conexion->prepare('SELECT p.codigo, p.nombre, p.precio, p.descripcion, f.id AS familia_id, f.nombre AS nombre_familia, i.id AS imagen_id, i.nombre AS nombre_imagen, i.ruta AS rutaImagen 
                                         FROM productos p 
                                         INNER JOIN familias f ON p.familia_id = f.id 
                                         INNER JOIN imagenes i ON p.imagen_id = i.id 
                                         WHERE p.codigo = :id');
 
-        $queryListarProducto->bindParam(':id', $id, PDO::PARAM_INT);
-        $queryListarProducto->execute();
+            $queryListarProducto->bindParam(':id', $id, PDO::PARAM_INT);
+            $queryListarProducto->execute();
 
-        if ($queryListarProducto->rowCount() > 0) {
-            $producto = $queryListarProducto->fetch(PDO::FETCH_ASSOC);
+            if ($queryListarProducto->rowCount() > 0) {
+                $producto = $queryListarProducto->fetch(PDO::FETCH_ASSOC);
 
-            $imagenRuta = $producto['rutaImagen'] ?? '';
+                $imagenRuta = $producto['rutaImagen'] ?? '';
 
-            // Crear una instancia de Imagen con la ruta obtenida
-            $imagen = new Imagen(0, '', $imagenRuta);
+                // Crear una instancia de Imagen con la ruta obtenida
+                $imagen = new Imagen(0, '', $imagenRuta);
 
-            // Crear una instancia de Familia con el ID y el nombre obtenidos
-            $familia = new Familia($producto['familia_id'], $producto['nombre_familia']);
+                // Crear una instancia de Familia con el ID y el nombre obtenidos
+                $familia = new Familia($producto['familia_id'], $producto['nombre_familia']);
 
-            // Crear una instancia de Producto con los datos obtenidos
-            return new Producto(
-                $producto['codigo'],
-                $producto['precio'],
-                $producto['nombre'],
-                $producto['descripcion'],
-                $familia,
-                $imagen // Aquí pasamos la instancia de Imagen creada
-            );
-        } else {
-            return null;
+                // Crear una instancia de Producto con los datos obtenidos
+                return new Producto(
+                    $producto['codigo'],
+                    $producto['precio'],
+                    $producto['nombre'],
+                    $producto['descripcion'],
+                    $familia,
+                    $imagen // Aquí pasamos la instancia de Imagen creada
+                );
+            } else {
+                return null;
+            }
+        } catch (PDOException $e) {
+            throw new PDOException('Error al obtener el producto: ' . $e->getMessage());
         }
-    } catch (PDOException $e) {
-        throw new PDOException('Error al obtener el producto: ' . $e->getMessage());
     }
-}
 
 
 
@@ -198,40 +196,34 @@ final class PDOProducto implements IntRepoProducto
         $resultado = false;
 
         if (!is_null($conexion)) {
-            if ($this->crearTablas()) {
-                try {
-                    $conexion->beginTransaction();
+            try {
+                $conexion->beginTransaction();
 
-                    // Obtener la información de la imagen antes de borrar el producto
-                    $queryInfoImagen = $conexion->prepare('SELECT imagen_id FROM productos WHERE id = :idProducto');
-                    $queryInfoImagen->bindParam(':idProducto', $id);
-                    $queryInfoImagen->execute();
-                    $imagen_id = $queryInfoImagen->fetchColumn();
+                // Obtener la información de la imagen antes de borrar el producto
+                $queryInfoImagen = $conexion->prepare('SELECT imagen_id FROM productos WHERE codigo = :idProducto');
+                $queryInfoImagen->bindParam(':idProducto', $id);
+                $queryInfoImagen->execute();
+                $imagen_id = $queryInfoImagen->fetchColumn();
 
-                    // DELETE del producto en la tabla productos por su ID
-                    $queryBorraProducto = $conexion->prepare('DELETE FROM productos WHERE id = :idProducto');
-                    $queryBorraProducto->bindParam(':idProducto', $id);
-                    $queryBorraProducto->execute();
+                // Borra la imagen asociada al producto
+                $queryBorraImagen = $conexion->prepare('DELETE FROM imagenes WHERE id = :imagen_id');
+                $queryBorraImagen->bindParam(':imagen_id', $imagen_id);
+                $queryBorraImagen->execute();
 
-                    // Borra la imagen asociada al producto
-                    if ($queryBorraProducto->rowCount() == 1) {
-                        $queryBorraImagen = $conexion->prepare('DELETE FROM imagenes WHERE id = :imagen_id');
-                        $queryBorraImagen->bindParam(':imagen_id', $imagen_id);
-                        $queryBorraImagen->execute();
+                // DELETE del producto en la tabla productos por su ID
+                $queryBorraProducto = $conexion->prepare('DELETE FROM productos WHERE codigo = :idProducto');
+                $queryBorraProducto->bindParam(':idProducto', $id);
+                $queryBorraProducto->execute();
 
-                        if ($queryBorraImagen->rowCount() == 1) {
-                            $conexion->commit();
-                            $resultado = true;
-                        } else {
-                            throw new PDOException('Error al borrar imagen asociada al producto. Revirtiendo cambios.');
-                        }
-                    } else {
-                        throw new PDOException('Error al borrar producto. Revirtiendo cambios.');
-                    }
-                } catch (PDOException $e) {
-                    $conexion->rollBack();
-                    echo '<p>' . $e->getMessage() . '</p>';
+                if ($queryBorraImagen->rowCount() == 1 && $queryBorraProducto->rowCount() == 1) {
+                    $conexion->commit();
+                    $resultado = true;
+                } else {
+                    throw new PDOException('Error al borrar imagen o producto. Revirtiendo cambios.');
                 }
+            } catch (PDOException $e) {
+                $conexion->rollBack();
+                echo '<p>' . $e->getMessage() . '</p>';
             }
         }
 
@@ -239,12 +231,13 @@ final class PDOProducto implements IntRepoProducto
     }
 
 
+
     /**
      * Crea la tabla de productos en la base de datos si no existe.
      *
      * @return bool Devuelve true si la tabla se crea correctamente, false en caso contrario.
      */
-    private function crearTablas(): bool
+    /*private function crearTablas(): bool
     {
         $conexion = $this->getConexion();
         $resultado = false;
@@ -284,5 +277,5 @@ final class PDOProducto implements IntRepoProducto
         }
 
         return $resultado;
-    }
+    }*/
 }

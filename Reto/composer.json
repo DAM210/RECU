@@ -5,7 +5,10 @@
     "autoload": {
         "psr-4": {
             "Reto\\": "src/"
-        }
+        },
+        "files": [
+            "src/Funciones/helper.php"
+        ]
     },
     "authors": [
         {
