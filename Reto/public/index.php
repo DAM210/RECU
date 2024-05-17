@@ -17,7 +17,7 @@ $productos = $produ->listarProductos();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/estilo.css">
+    <link rel="stylesheet" href="css/estilo.css">
     <title>Listado de Productos</title>
 </head>
 
@@ -37,10 +37,10 @@ $productos = $produ->listarProductos();
         <tbody>
             <?php foreach ($productos as $producto) : ?>
                 <tr>
-                    <td><?php echo $producto->getCodigo(); ?></td>
-                    <td><?php echo $producto->getNombre(); ?></td>
-                    <td><?php echo $producto->getPrecio(); ?></td>
-                    <td>
+                    <td class="tdIndex"><?php echo $producto->getCodigo(); ?></td>
+                    <td class="tdIndex"><?php echo $producto->getNombre(); ?></td>
+                    <td class="tdIndex"><?php echo $producto->getPrecio(); ?></td>
+                    <td class="tdIndex">
                         <form action="detalle.php" method="POST">
                             <input type="hidden" name="id" value="<?php echo $producto->getCodigo(); ?>">
                             <button type="submit" class="btn">Más información</button>

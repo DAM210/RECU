@@ -10,7 +10,7 @@ use function Reto\Funciones\{verificarUsuario};
 
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="../css/estilo.css">
+    <link rel="stylesheet" href="css/estilo.css">
     <title>Iniciar sesión</title>
 </head>
 

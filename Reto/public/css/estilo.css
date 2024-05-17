@@ -1,11 +1,15 @@
+
 table {
     width: 100%;
     border-collapse: collapse;
 }
 
 td {
-    //border: 1px solid black;
     padding: 8px;
+}
+.tdIndex{
+    border: 1px solid black;
+    padding: 4px 4px 4px 8px;
 }
 
 th {
@@ -20,6 +24,7 @@ th {
     cursor: pointer;
     border-radius: 5px;
     text-align: center;
+    margin:1px;
 }
 
 .btn:hover {
@@ -45,11 +50,24 @@ form input[type="file"] {
     border-radius: 5px;
 }
 form select{
-    width: 13%;
+    width: 12.7%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+
+#botonListadoCrear{
+    margin-top:5px;
+}
+.form-group {
+    display: flex;
+    align-items: center;
+}
+
+.form-group label {
+    margin-right: 10px; /* Ajusta el espacio entre el label y el select */
+}
+
 
 form textarea {
     resize: vertical;

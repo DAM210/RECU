@@ -46,7 +46,7 @@ if (isset($_GET['success'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/estilo.css">
+    <link rel="stylesheet" href="css/estilo.css">
     <title>Crear Producto</title>
 </head>
 
@@ -62,7 +62,7 @@ if (isset($_GET['success'])) {
         <div>
             <input placeholder="Precio" type="text" id="precio" name="precio">
         </div>
-        <div>
+        <div class="form-group">
             <label for="familia">Selecciona una familia: </label>
             <select id="familia" name="familia_id" required>
                 <?php foreach ($familias as $familia) : ?>
@@ -75,7 +75,7 @@ if (isset($_GET['success'])) {
         </div>
         <button type="submit" name="crear">Crear Producto</button>
     </form>
-    <a href="productos.php"><button class="btn">Listado de productos</button></a>
+    <a href="productos.php"><button class="btn" id="botonListadoCrear">Listado de productos</button></a>
 
 </body>
 
