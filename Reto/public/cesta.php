@@ -4,15 +4,16 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 use Reto\Clases\CestaCompra;
 use Reto\Clases\PDOProducto;
 
+session_start();
+
 if (!isset($_SESSION['usuario'])) {
     header('Location: ' . 'login.php');
 }
 if (isset($_SESSION['usuario'])) {
-    echo "<a href='login.php'> <button type='button'>Desconectar</button></a>";
+    echo "<a href='productos.php'> <button type='button'>Desconectar</button></a>";
 }
 $cesta = new CestaCompra(new PDOProducto());
 $cesta = $cesta->carga_cesta();
-$imagenes = array('PulpFiction' => 'imagenes/pulpFiction.jpg', 'elPadrino' => 'imagenes/elPadrino.jpg', 'laVidaEsBella' => 'imagenes/LaVidaEsBella.jpg', 'elClubDeLaLucha' => 'imagenes/ElClubDeLaLucha.jpg', 'cadenaPerpetua' => 'imagenes/CadenaPerpetua.jpg', 'laListaDeSchindler' => 'imagenes/schindlerList.jpg', 'saw' => 'imagenes/Saw.jpg', 'ReservoirDogs' => 'imagenes/reservoirDogs.jpg', 'elSeñorDeLosAnillos:ElRetornoDelRey' => 'imagenes/elSenorDeLosAnillosElRetornoDelRey.jpg', 'elPadrino.ParteII' => 'imagenes/elPadrinoParteII.jpg');
 ?>
 <!doctype html>
 <html lang="en">
@@ -40,7 +41,7 @@ $imagenes = array('PulpFiction' => 'imagenes/pulpFiction.jpg', 'elPadrino' => 'i
         echo "";
         ?>
     </table>
-    <a href='index.php'> <button type='button'>Seguir comprando</button></a>
+    <a href='productos.php'> <button type='button'>Seguir comprando</button></a>
     <a href='pagar.php'> <button type='button'>Realizar compra</button></a>
 </body>
 

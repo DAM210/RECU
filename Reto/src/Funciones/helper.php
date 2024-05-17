@@ -1,5 +1,4 @@
 <?php
-namespace Reto\Funciones;
 
 /**
 * Valida si el parámetro está vacío.
@@ -7,8 +6,17 @@ namespace Reto\Funciones;
 * @param string $requerido Parámetro a validar.
 * @return bool True si no está vacío, false en caso contrario.
 */
-function validarRequerido(string $requerido) : bool {
-    return !empty($requerido);
+function validarRequerido($valor): bool {
+    if (is_array($valor)) {
+        // Para arrays, verificar si al menos un elemento está presente y no está vacío
+        return !empty(array_filter($valor));
+    } elseif (is_string($valor)) {
+        // Para cadenas, verificar si la cadena está presente y no está vacía
+        return !empty(trim($valor));
+    } else {
+        // Para otros tipos de datos, simplemente verificar si el valor está presente y no es null
+        return isset($valor);
+    }
 }
 
 /**
@@ -39,7 +47,7 @@ function validarLongitud(string $campo, int $longitud) : bool {
 * @return bool True si el fichero se ha subido, false en caso contrario.
 */
 function validarSubidaFichero(array $fichero) : bool {
-    return $fichero['fichero']['error'] == UPLOAD_ERR_OK;
+    return $fichero['name']!=0 && $fichero['error'] == UPLOAD_ERR_OK;
 }
 
 /**
@@ -49,10 +57,23 @@ function validarSubidaFichero(array $fichero) : bool {
 * @return bool True si el fichero se ha movido, false en caso contrario.
 */
 function moverFicheroSubido(array $fichero) : bool {
-    $directorioSubida = dirname(__DIR__, 2) . '/public/img/';
-    $ficheroSubido = $directorioSubida . basename($fichero['fichero']['name']);
-    return move_uploaded_file($fichero['fichero']['tmp_name'], $ficheroSubido);
+    if (isset($fichero['tmp_name']) && isset($fichero['name'])) {
+        $directorioSubida = dirname(__DIR__,2) . '/public/img/'; // Ruta absoluta al directorio de destino
+
+        $ficheroSubido = $directorioSubida . basename($fichero['name']);
+
+        if (move_uploaded_file($fichero['tmp_name'], $ficheroSubido)) {
+            return true;
+        } else {
+            return "Error: No se pudo mover el archivo al directorio de destino.";
+        }
+    } else {
+        return "Error: Los índices necesarios no están presentes en el arreglo \$fichero.";
+    }
 }
+
+
+
 
 /**
 * Valida si un fichero dado tiene una extensión concreta.
@@ -61,7 +82,7 @@ function moverFicheroSubido(array $fichero) : bool {
 * @return bool True si el nombre tiene una extensión admitida, false en caso contrario.
 */
 function validarFormatoImagen(string $extensionImagen) : bool {
-    $formatosPermitidos = array('image/jpeg', 'image/png', 'image/gif');
+$formatosPermitidos = array('image/jpeg'/*, 'image/png', 'image/gif'*/);
     return in_array($extensionImagen, $formatosPermitidos);
 }
 

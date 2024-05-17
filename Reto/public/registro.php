@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 include __DIR__ . '/../src/Funciones/funciones.php';
-use function Reto\Funciones\{registrarUsuario};
+use function Reto\Funciones\{registrarUsuario}
 ?>
 <!doctype html>
 <html lang="en">
@@ -23,7 +23,7 @@ use function Reto\Funciones\{registrarUsuario};
                     session_start();
                     $arrUser = array('nombre' => $_POST['usuario'], 'password' => md5($_POST['passwd']));
                     $_SESSION['usuario'] = $arrUser;
-                    header('Location: ' . 'index.php');
+                    header('Location: ' . 'registro.php');
                 } else {
                     echo "USUARIO ya esta registrado";
                 }

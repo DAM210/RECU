@@ -4,14 +4,14 @@ namespace Reto\Clases;
 
 class Producto
 {
-    private ?int $codigo;
+    private int $codigo;
     private float $precio;
     private string $nombre;
     private string $descripcion;
     private Familia $familia;
     private Imagen $imagen;
 
-    public function __construct(int $codigo = null, float $precio, string $nombre, string $descripcion, Familia $familia, Imagen $imagen)
+    public function __construct(float $precio, string $nombre, string $descripcion, Familia $familia, Imagen $imagen, int $codigo=0)
     {
         $this->codigo = $codigo;
         $this->precio = $precio;

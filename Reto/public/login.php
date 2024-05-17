@@ -23,7 +23,7 @@ use function Reto\Funciones\{verificarUsuario};
                 $arrUser = array('nombre' => $_POST['usuario'], 'password' => md5($_POST['passwd']));
                 session_start();
                 $_SESSION['usuario'] = $arrUser;
-                header('Location: ' . 'index.php');
+                header('Location: ' . 'productos.php');
             } else {
                 echo "No se pudo iniciar sesion.";
             }

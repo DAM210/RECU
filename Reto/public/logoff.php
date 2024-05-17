@@ -3,5 +3,5 @@
     echo $_SESSION['usuario']['nombre'];
 if (isset($_SESSION['usuario'])) {
     session_destroy();
-    header('Location: '.'login.php');
+    header('Location: '.'productos.php');
 }

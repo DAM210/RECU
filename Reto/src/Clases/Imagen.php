@@ -3,12 +3,12 @@
 namespace Reto\Clases;
 
 class Imagen {
-    private ?int $id;
+    private int $id;
     private string $nombre;
     private string $ruta;
 
-    public function __construct(int $id = null, string $nombre, string $ruta) {
-        $this->id = $id;
+    public function __construct(string $nombre, string $ruta, int $id=0) {
+        $this->id=$id;
         $this->nombre = $nombre;
         $this->ruta = $ruta;
     }

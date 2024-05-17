@@ -6,17 +6,10 @@ use Reto\Clases\PDOProducto;
 use Reto\Clases\Produ;
 use Reto\Clases\CestaCompra;
 
-if (!isset($_SESSION['usuario'])) {
-    header('Location: ' . 'login.php');
-}
-if (isset($_SESSION['usuario'])) {
-?>
-    <a href='logoff.php'><button type='button'>Desconectar</button></a>
-<?php
-}
+// Iniciar la sesión
+session_start();
 
-$cesta = new CestaCompra(new PDOProducto());
-$cesta->carga_cesta();
+$cesta = CestaCompra::carga_cesta();
 
 $produ = new Produ(new PDOProducto());
 $productos = $produ->listarProductos();
@@ -40,19 +33,37 @@ $productos = $produ->listarProductos();
         $cesta->guardaCesta();
     }
 
-    $cesta->muestra();
 
-    if (isset($_SESSION['cesta'])) {
-        echo "<form action ='' method='post'>";
-        echo "<input type='submit' name='vaciar' id='vaciar' value='Vaciar'>";
-        echo "<a href='cesta.php'> <button type='button'>Pagar</button></a>";
-    }
-    if (isset($_POST['vaciar'])) {
-        unset($_SESSION['cesta']);
-        header('Location:' . 'index.php');
-    }
     ?>
     <div class="container">
+        <div>
+            <h1>Listado de productos</h1>
+            <?php
+            $cesta->muestra();
+
+            if (isset($_SESSION['cesta'])) {
+                echo "<form action ='' method='post'>";
+                echo "<input type='submit' name='vaciar' id='vaciar' value='Vaciar' class='btn btn-primary'>";
+                echo "<a href='cesta.php'> <button type='button' class='btn btn-primary'>Comprar</button></a>";
+                echo '<p>' . count($cesta->getProductos()) . ' productos' . '</p>';
+                echo '<p>Precio: ' . $cesta->getCoste() . '</p>';
+
+                /*if (isset($_POST['anadir'])) {
+                    echo '<p>' . count($cesta->getProductos()) . ' productos' . '</p>';
+                    echo '<p>Precio: ' . $cesta->getCoste() . '</p>';
+                }*/
+            }
+
+            if (isset($_SESSION['usuario'])) {
+                echo "<a href='logoff.php'> <button type='button'> Desconectar usuario " . $_SESSION['usuario']['nombre'] . "</button></a>";
+            }
+
+            if (isset($_POST['vaciar'])) {
+                unset($_SESSION['cesta']);
+                header('Location:' . 'productos.php');
+            }
+            ?>
+        </div>
         <div class="row">
             <?php foreach ($productos as $producto) : ?>
                 <div class="col-md-4">

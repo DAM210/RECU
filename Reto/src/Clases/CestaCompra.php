@@ -3,6 +3,7 @@
 namespace Reto\Clases;
 
 use Reto\Interfaces\IntRepoProducto;
+use Reto\Clases\PDOProducto;
 
 class CestaCompra
 {
@@ -12,7 +13,8 @@ class CestaCompra
     public function __construct(IntRepoProducto $repositorioProducto)
     {
         $this->productos = [];
-        $this->repositorioProducto = $repositorioProducto;
+        $this->repositorioProducto=$repositorioProducto;
+
     }
 
     public function nuevoArticulo(int $id)
@@ -31,7 +33,7 @@ class CestaCompra
     public function getCoste(): float
     {
         $total = 0;
-        foreach ($this->productos as $producto) {
+        foreach ($this->getProductos() as $producto) {
             $total += $producto->getPrecio();
         }
         return $total;
@@ -39,20 +41,24 @@ class CestaCompra
 
     public function estaVacia(): bool
     {
-        return empty($this->productos);
+        $vacia = false;
+        if (count($this->productos) == 0) {
+            $vacia = true;
+        }
+        return $vacia;
     }
 
     public function guardaCesta()
     {
-        // Guardar la cesta en la sesión del usuario
-        $_SESSION['cesta'] = serialize($this->productos);
+        $_SESSION['cesta']=$this;
     }
 
-    public function carga_cesta()
+    public static function carga_cesta()
     {
-        // Recuperar la cesta de la sesión del usuario
-        if (isset($_SESSION['cesta'])) {
-            return $this->productos = unserialize($_SESSION['cesta']);
+        if (!isset($_SESSION['cesta'])) {
+            return  new cestaCompra(new PDOProducto());
+        } else {
+            return $_SESSION['cesta'];
         }
     }
 

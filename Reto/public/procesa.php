@@ -1,64 +1,67 @@
 <?php
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-use function Reto\Funciones\{
-    validarRequerido,
-    validarNumerico,
-    validarFormatoImagen,
-    validarSubidaFichero,
-    moverFicheroSubido,
-    limpiarEntrada,
-    redireccionar
-};
-
-use Reto\Clases\Familia;
+include __DIR__ . '/../src/Funciones/funciones.php';
+use function Reto\Funciones\{getFamilia};
 use Reto\Clases\Producto;
 use Reto\Clases\Produ;
 use Reto\Clases\Imagen;
 use Reto\Clases\PDOProducto;
 
-if (isset($_POST['enviar'])) {
+
+if (isset($_POST['crear'])) {
+    
     // Validar que los campos no estén vacíos
-    if (!validarRequerido($_FILES['fichero']['name'])) redireccionar('index.php?error=1');
+    if (!validarRequerido($_FILES['imagen']['name'])) {
+        redireccionar('formularioAlta.php?error=1');
+    }
 
     foreach ($_POST as $clave => $valor) {
-        if (!validarRequerido($valor)) redireccionar('index.php?error=1');
+        if ($clave !== 'imagen' && $clave !== 'crear' && !validarRequerido($valor)) {
+            redireccionar('formularioAlta.php?error=1');
+        }
     }
-
+      
     // Validar el precio
-    if (!validarNumerico($_POST['precio'])) redireccionar('index.php?error=4');
+    if (!validarNumerico($_POST['precio'])) redireccionar('formularioAlta.php?error=4');
 
     // Validar formatos de imagen
-    if (!validarFormatoImagen($_FILES['fichero']['type'])) redireccionar('index.php?error=3');
+    if (!validarFormatoImagen($_FILES['imagen']['type'])) {
+        redireccionar('formularioAlta.php?error=3');
+    }
+    
 
     // Validar la subida de la imagen
-    if (validarSubidaFichero($_FILES)) {
+    if (validarSubidaFichero($_FILES['imagen'])) {
         // Asignar un ID único al nombre de la imagen y sustituir espacios por '_' si los tuviese
-        $_FILES['fichero']['name'] = str_replace(' ', '_', uniqid() . '-' . $_FILES['fichero']['name']);
+        //$_FILES['imagen']['name'] = str_replace(' ', '_', uniqid() . '-' . $_FILES['imagen']['name']);
 
+        limpiarEntrada();
+        $imagenNombre=$_FILES['imagen']['name'];
+        $imagenNombre=uniqid().'_'.$imagenNombre;
         // Mover el fichero imagen a la ubicación img
-        if (moverFicheroSubido($_FILES)) {
-            limpiarEntrada();
-
-            // Antes de crear el objeto Producto, asegurémonos de que $precio sea un float
-            $precio = str_replace(',', '.', $_POST['precio']);
-            $precio = floatval($precio);
+        if (moverFicheroSubido($_FILES['imagen'])) {
 
             // Crear el producto en la base de datos
-            $imagen = new Imagen($_POST['imagen_id'], $_FILES['fichero']['name'], '/img/' . $_FILES['fichero']['name']);
-            $familia = new Familia($_POST['familia_id'], $_POST['nombre']);
+            $imagen = new Imagen($_FILES['imagen']['name'], 'img/' . $_FILES['imagen']['name']); //necesario nombre y ruta
+            $familia=getFamilia($_POST['familia_id']);
 
-            if ((new Produ(new PDOProducto()))->crearProducto(new Producto(null, $precio, $_POST['nombre'], $_POST['descripcion'], $familia, $imagen))) {
-                redireccionar('index.php?success=1'); // El producto ha sido dado de alta correctamente
+            echo $imagen->getNombre().' '.$imagen->getRuta();
+            echo $familia->getId().' '.$familia->getNombre();
+            if ((new Produ(new PDOProducto()))->crearProducto(new Producto($_POST['precio'], $_POST['nombre'], $_POST['descripcion'], $familia, $imagen))) {
+                redireccionar('formularioAlta.php?success=1'); // El producto ha sido dado de alta correctamente
+
             } else {
-                unlink(__DIR__ . '/public/img/' . $_FILES['fichero']['name']);
-                redireccionar('index.php?error=5'); // No se ha podido guardar el producto en base de datos
+                unlink(__DIR__ . '/public/img/' . $imagenNombre);
+                //sredireccionar('formularioAlta.php?error=5'); // No se ha podido guardar el producto en base de datos
             }
         } else {
-            redireccionar('index.php?error=2'); // No se puede procesar el archivo
+            redireccionar('formularioAlta.php?error=2'); // No se puede procesar el archivo
         }
     } else {
-        redireccionar('index.php?error=2'); // No se puede procesar el archivo
+        redireccionar('formularioAlta.php?error=2'); // No se puede procesar el archivo
     }
+
 }
 ?>
+

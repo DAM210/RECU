@@ -26,7 +26,7 @@ final class PDOProducto implements IntRepoProducto
     /**
      * Crea un nuevo producto.
      *
-     * @param GrupoRock $producto Producto a crear.
+     * @param Producto $producto Producto a crear.
      * @return bool Devuelve true si el producto se crea correctamente, false en caso contrario.
      */
     public function crear(Producto $producto): bool
@@ -42,15 +42,16 @@ final class PDOProducto implements IntRepoProducto
             $precio = $producto->getPrecio();
             $descripcion = $producto->getDescripcion();
             $imagenNombre = $producto->getImagen()->getNombre();
+            $imagenRuta = $producto->getImagen()->getRuta();
             $familia = $producto->getFamilia(); // Obtener el objeto Familia
             $familiaId = $familia->getId(); // Obtener el ID de la familia
             try {
                 $conexion->beginTransaction();
 
                 // INSERT en la tabla imagenes
-                $queryInsertaImagen = $conexion->prepare('INSERT INTO imagenes (nombre, url) VALUES (:nombre, :url)');
+                $queryInsertaImagen = $conexion->prepare('INSERT INTO imagenes (nombre, ruta) VALUES (:nombre, :ruta)');
                 $queryInsertaImagen->bindParam(':nombre', $imagenNombre);
-                $queryInsertaImagen->bindParam(':url', $imagenUrl);
+                $queryInsertaImagen->bindParam(':ruta', $imagenRuta);
                 $queryInsertaImagen->execute();
 
                 if ($queryInsertaImagen->rowCount() == 1) {
@@ -105,16 +106,17 @@ final class PDOProducto implements IntRepoProducto
                     $familia = new Familia($producto->familia_id, '');
 
                     // Creamos un objeto Imagen con los datos de la imagen obtenidos del registro
-                    $imagen = new Imagen($producto->idImagen, $producto->nombreImagen, $producto->rutaImagen);
+                    $imagen = new Imagen($producto->nombreImagen, $producto->rutaImagen, $producto->idImagen);
 
                     // Creamos un objeto Producto con los datos del registro
                     $productoObj = new Producto(
-                        $producto->codigo,
+
                         $producto->precio,
                         $producto->nombre,
                         $producto->descripcion,
                         $familia, // Pasamos el objeto Familia en lugar del ID directamente
-                        $imagen
+                        $imagen,
+                        $producto->codigo
                     );
 
                     // Añadimos el objeto Producto al array
@@ -160,19 +162,20 @@ final class PDOProducto implements IntRepoProducto
                 $imagenRuta = $producto['rutaImagen'] ?? '';
 
                 // Crear una instancia de Imagen con la ruta obtenida
-                $imagen = new Imagen(0, '', $imagenRuta);
+                $imagen = new Imagen('', $imagenRuta);
 
                 // Crear una instancia de Familia con el ID y el nombre obtenidos
                 $familia = new Familia($producto['familia_id'], $producto['nombre_familia']);
 
                 // Crear una instancia de Producto con los datos obtenidos
                 return new Producto(
-                    $producto['codigo'],
+
                     $producto['precio'],
                     $producto['nombre'],
                     $producto['descripcion'],
                     $familia,
-                    $imagen // Aquí pasamos la instancia de Imagen creada
+                    $imagen, // Aquí pasamos la instancia de Imagen creada
+                    $producto['codigo']
                 );
             } else {
                 return null;
@@ -205,17 +208,17 @@ final class PDOProducto implements IntRepoProducto
                 $queryInfoImagen->execute();
                 $imagen_id = $queryInfoImagen->fetchColumn();
 
-                // Borra la imagen asociada al producto
-                $queryBorraImagen = $conexion->prepare('DELETE FROM imagenes WHERE id = :imagen_id');
-                $queryBorraImagen->bindParam(':imagen_id', $imagen_id);
-                $queryBorraImagen->execute();
-
                 // DELETE del producto en la tabla productos por su ID
                 $queryBorraProducto = $conexion->prepare('DELETE FROM productos WHERE codigo = :idProducto');
                 $queryBorraProducto->bindParam(':idProducto', $id);
                 $queryBorraProducto->execute();
 
-                if ($queryBorraImagen->rowCount() == 1 && $queryBorraProducto->rowCount() == 1) {
+                // Borra la imagen asociada al producto
+                $queryBorraImagen = $conexion->prepare('DELETE FROM imagenes WHERE id = :imagen_id');
+                $queryBorraImagen->bindParam(':imagen_id', $imagen_id);
+                $queryBorraImagen->execute();
+
+                if ($queryBorraProducto->rowCount() == 1 && $queryBorraImagen->rowCount() == 1) {
                     $conexion->commit();
                     $resultado = true;
                 } else {
@@ -229,53 +232,4 @@ final class PDOProducto implements IntRepoProducto
 
         return $resultado;
     }
-
-
-
-    /**
-     * Crea la tabla de productos en la base de datos si no existe.
-     *
-     * @return bool Devuelve true si la tabla se crea correctamente, false en caso contrario.
-     */
-    /*private function crearTablas(): bool
-    {
-        $conexion = $this->getConexion();
-        $resultado = false;
-
-        if (!is_null($conexion)) {
-            try {
-                // Creación tabla imagenes
-                $conexion->query('
-                    CREATE TABLE IF NOT EXISTS imagenes (
-                        id INT NOT NULL AUTO_INCREMENT,
-                        nombre VARCHAR(100) NOT NULL,
-                        ruta VARCHAR(255) NOT NULL,
-                        PRIMARY KEY (id)
-                    );
-                ');
-
-                // Creación tabla productos
-                $conexion->query('
-                CREATE TABLE IF NOT EXISTS productos (
-                    codigo int(11) NOT NULL AUTO_INCREMENT,
-                    precio float NOT NULL,
-                    nombre varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
-                    descripcion varchar(1000) COLLATE utf8mb4_spanish2_ci NOT NULL,
-                    familia_id int(11) NOT NULL,
-                    imagen_id int(11) NOT NULL, -- Nueva columna para la imagen
-                    PRIMARY KEY (`codigo`),
-                    KEY `fk_productos_familias` (`familia_id`),
-                    CONSTRAINT `fk_productos_familias` FOREIGN KEY (`familia_id`) REFERENCES `familias` (`id`) ON UPDATE CASCADE,
-                    CONSTRAINT `fk_productos_imagenes` FOREIGN KEY (`imagen_id`) REFERENCES `imagenes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE -- Nueva restricción de clave externa
-                ');
-
-                // Llegado a este punto si no ha habido ninguna excepción damos el resultado como true
-                $resultado = true;
-            } catch (PDOException $e) {
-                echo '<p>' . $e->getMessage() . '</p>';
-            }
-        }
-
-        return $resultado;
-    }*/
 }

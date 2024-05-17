@@ -13,7 +13,6 @@
 
     use Reto\Clases\Produ;
     use Reto\Clases\PDOProducto;
-    use function Reto\Funciones\redireccionar;
 
     if (isset($_POST['id']) && !empty($_POST['id'])) {
         // Recogemos el producto
@@ -22,7 +21,7 @@
         // Si se ha recogido correctamente lo eliminamos junto a su imagen almacenada
         if (!is_null($producto)) {
             if ((new Produ(new PDOProducto()))->borrarProducto($producto->getCodigo())) {
-                unlink('.' . $grupo->getImagen()->getUrl());
+                unlink('.' . $producto->getImagen()->getRuta());
                 redireccionar('index.php?success=1'); // Producto e imagen borrados
             } else {
                 redireccionar('index.php?error=3'); // No se ha podido borrar el producto
