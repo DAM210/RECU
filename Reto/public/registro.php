@@ -8,6 +8,7 @@ use function Reto\Funciones\{registrarUsuario}
 
 <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/estilo.css">
     <title>REGISTRO</title>
 </head>
 
@@ -33,7 +34,7 @@ use function Reto\Funciones\{registrarUsuario}
         }
     }
     ?>
-    <form method="post" action="">
+    <form class="formLog" method="post" action="">
         <fieldset>
             <legend>Registro de usuarios</legend>
             <label for="usuario">Nombre usuario: </label>
@@ -42,8 +43,8 @@ use function Reto\Funciones\{registrarUsuario}
             <input type="password" id="passwd" name="passwd" required><br>
             <label for="passwd">Repita la contraseña: </label>
             <input type="password" id="passwd2" name="passwd2" required><br>
-            <button type='submit' name='registrar'>Registrar</button>
-            <a href='inicioSesion.php'> <button type='button'>Iniciar sesión</button></a>
+            <button type='submit' name='registrar' class="btn">Registrar</button>
+            <a href='login.php'> <button type='button'class="btn">Iniciar sesión</button></a>
         </fieldset>
     </form>
 </body>

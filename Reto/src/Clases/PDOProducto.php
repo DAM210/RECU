@@ -98,12 +98,12 @@ final class PDOProducto implements IntRepoProducto
         if (!is_null($conexion)) {
             try {
                 // SELECT de todos los productos
-                $queryListarProductos = $conexion->query('SELECT p.codigo, p.nombre, p.precio, p.descripcion, p.familia_id, p.imagen_id, i.id AS idImagen, i.nombre AS nombreImagen, i.ruta AS rutaImagen, f.id AS familia_id FROM productos p INNER JOIN imagenes i ON p.imagen_id = i.id INNER JOIN familias f ON p.familia_id = f.id');
+                $queryListarProductos = $conexion->query('SELECT p.codigo, p.nombre, p.precio, p.descripcion, p.familia_id, p.imagen_id, i.id AS idImagen, i.nombre AS nombreImagen, i.ruta AS rutaImagen, f.id AS familia_id, f.nombre AS familia_nombre FROM productos p INNER JOIN imagenes i ON p.imagen_id = i.id INNER JOIN familias f ON p.familia_id = f.id');
 
                 // Rellenamos el array creando objetos Producto por cada registro obtenido
                 while ($producto = $queryListarProductos->fetch(PDO::FETCH_OBJ)) {
                     // Creamos un objeto Familia con los datos de la familia obtenidos del registro
-                    $familia = new Familia($producto->familia_id, '');
+                    $familia = new Familia($producto->familia_id, $producto->familia_nombre);
 
                     // Creamos un objeto Imagen con los datos de la imagen obtenidos del registro
                     $imagen = new Imagen($producto->nombreImagen, $producto->rutaImagen, $producto->idImagen);

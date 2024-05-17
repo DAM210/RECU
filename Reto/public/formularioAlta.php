@@ -23,7 +23,7 @@ if (isset($_GET['error'])) {
         default => null
     };
 
-    if (!is_null($mensajeAviso)) echo "<p>$mensajeAviso</p>";
+    if (!is_null($mensajeAviso)) echo "<p class='error-message'>$mensajeAviso</p>";
 }
 
 // Gestión de success por redirección GET
@@ -35,7 +35,7 @@ if (isset($_GET['success'])) {
         default => null
     };
 
-    if (!is_null($mensajeAviso)) echo "<p>$mensajeAviso</p>";
+    if (!is_null($mensajeAviso)) echo "<p class='success-message'>$mensajeAviso</p>";
 }
 
 ?>
@@ -46,6 +46,7 @@ if (isset($_GET['success'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/estilo.css">
     <title>Crear Producto</title>
 </head>
 
@@ -53,19 +54,16 @@ if (isset($_GET['success'])) {
     <h1>Crear Nuevo Producto</h1>
     <form action="procesa.php" method="POST" enctype="multipart/form-data">
         <div>
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre">
+            <input placeholder="Nombre" type="text" id="nombre" name="nombre">
         </div>
         <div>
-            <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion"></textarea>
+            <textarea placeholder="Descripcion" id="descripcion" name="descripcion"></textarea>
         </div>
         <div>
-            <label for="precio">Precio:</label>
-            <input type="text" id="precio" name="precio">
+            <input placeholder="Precio" type="text" id="precio" name="precio">
         </div>
         <div>
-            <label for="familia">Familia:</label>
+            <label for="familia">Selecciona una familia: </label>
             <select id="familia" name="familia_id" required>
                 <?php foreach ($familias as $familia) : ?>
                     <option value="<?php echo $familia['id']; ?>"><?php echo $familia['nombre']; ?></option>
@@ -73,11 +71,11 @@ if (isset($_GET['success'])) {
             </select>
         </div>
         <div>
-            <label for="imagen">Imagen:</label>
             <input type="file" id="imagen" name="imagen" accept="image/*">
         </div>
         <button type="submit" name="crear">Crear Producto</button>
     </form>
+    <a href="productos.php"><button class="btn">Listado de productos</button></a>
 
 </body>
 

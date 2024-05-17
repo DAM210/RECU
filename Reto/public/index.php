@@ -56,7 +56,7 @@ $productos = $produ->listarProductos();
     </table>
 
     <!-- Enlace para crear un nuevo producto -->
-    <a href="formularioAlta.php">Crear Nuevo Producto</a>
+    <div class="center-button"><a href="formularioAlta.php"><button class="btn">Crear Nuevo Producto</button></a></div>
 </body>
 
 </html>

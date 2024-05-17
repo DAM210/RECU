@@ -1,14 +1,153 @@
 table {
     width: 100%;
     border-collapse: collapse;
-    border:3px solid black;
 }
 
 td {
-    border: 1px solid black;
+    //border: 1px solid black;
     padding: 8px;
 }
 
 th {
     background-color: #f2f2f2;
+}
+
+.btn {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.center-button {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+form div {
+    margin-bottom: 10px;
+}
+
+form input[type="text"],
+form textarea,
+form input[type="file"] {
+    width: 20%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+form select{
+    width: 13%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+form textarea {
+    resize: vertical;
+}
+
+form button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+.error-message {
+    background-color: red;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.success-message {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.cabecera {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom:10px;
+}
+
+.cabecera h1 {
+    margin: 0;
+}
+
+.product {
+    display: flex;
+    align-items: flex-start;
+    margin:5px;
+
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+}
+
+.product img {
+    max-height:300px;
+    margin-right: 20px;
+}
+
+.formLog {
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+fieldset {
+    border: none;
+}
+
+legend {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.formLog input[type="text"],
+.formLog input[type="password"] {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.compra{
+    font-family: Arial, sans-serif;
+    padding: 20px;
 }
