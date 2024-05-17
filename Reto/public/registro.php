@@ -24,7 +24,7 @@ use function Reto\Funciones\{registrarUsuario}
                     session_start();
                     $arrUser = array('nombre' => $_POST['usuario'], 'password' => md5($_POST['passwd']));
                     $_SESSION['usuario'] = $arrUser;
-                    header('Location: ' . 'registro.php');
+                    header('Location: ' . 'productos.php');
                 } else {
                     echo "USUARIO ya esta registrado";
                 }
