@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Animal;
+use App\Http\Requests\CrearAnimalRequest;
 
 class AnimalController extends Controller
 {
-    private $animales = array(
+    /*private $animales = array(
 		array(
 			'especie' => 'Bisonte',
 			'peso' => 1000,
@@ -53,7 +55,7 @@ class AnimalController extends Controller
 			'alimentacion' => 'carnívoro',
 			'descripcion' => 'Los leones son los únicos felinos que viven formando un grupo social jerarquizado con una división clara de papeles: los machos vigilan y defienden el territorio y las hembras cazan y cuidan de los cachorros. En cuanto a las crías, si son hembras se incorporan a la manada, reforzando y cohesionando el grupo; pero si son machos serán expulsados por su padre a los tres años de edad y vagarán, solos o en grupos muy reducidos, esperando que algún macho que tenga constituida una familia muestre un signo de debilidad, circunstancia que será aprovechada para enfrentarse a él y sustituirle. Los machos viejos, muchas veces heridos por la lucha, sobreviven durante poco tiempo y, si se recuperan de sus heridas, se convertirán en solitarios carroñeros. Como dato curioso, si un león es castrado durante una pelea, poco a poco irá perdiendo su espléndidad melena. La alimentación del león se basa en la captura de gacelas, cebras, ñús y otros antílopes, aunque no desprecian nunca la oportunidad de robar las capturas a otros cazadores menos robustos (hienas, guepardos, leopardos, etc.) o incluso alimentarse de carroña, ya que poseen un bajo porcentaje de éxito en la caza, capturando una presa de cinco intentos.'
 		),
-		
+
 		array(
 			'especie' => 'Mono de Gibraltar',
 			'peso' => 7,
@@ -73,7 +75,7 @@ class AnimalController extends Controller
 			'alimentacion' => 'carnívoro',
 			'descripcion' =>'Se encuentra en el continente asiático; es un predador carnívoro y es la especie de félido más grande del mundo junto con el león pudiendo alcanzar ambos un tamaño comparable al de los fósiles de félidos de mayor tamaño'
 		)
-    );
+    );*/
     /**
      * Display a listing of the resource.
      */
@@ -81,7 +83,8 @@ class AnimalController extends Controller
     {
         //return 'Listado de animales';
         //return view('animales.index');
-        return view('animales.index')->with(['animales'=>$this->animales]);
+        //return view('animales.index')->with(['animales'=>$this->animales]);
+        return view('animales.index', ["animales" => Animal::all()]);
     }
 
     /**
@@ -96,7 +99,7 @@ class AnimalController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CrearAnimalRequest $animalRequest)
     {
         //
     }
@@ -104,11 +107,12 @@ class AnimalController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $especie)
+    public function show(/*string $especie*/ Animal $animal)
     {
         //return 'Vista en detalle del animal '. $animal;
         // Buscar el animal por su especie en el arreglo de animales
-    $animal = null;
+
+    /*    $animal = null;
     foreach ($this->animales as $animalData) {
         if ($animalData['especie'] === $especie) {
             $animal = $animalData;
@@ -116,30 +120,32 @@ class AnimalController extends Controller
         }
     }
 
-    return view('animales.show', compact('animal'));
+    return view('animales.show', compact('animal'));*/
+    return view("animales.show", ["animal" => $animal]);
 
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $especie)
+    public function edit(/*string $especie*/ Animal $animal)
     {
-        $animal = null;
+        /*$animal = null;
         foreach ($this->animales as $animalData) {
             if ($animalData['especie'] === $especie) {
                 $animal = $animalData;
                 break;
             }
         }
-    
+
+        return view('animales.edit', compact('animal'));*/
         return view('animales.edit', compact('animal'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Animal $animal, Request $animalRequest)
     {
         //
     }

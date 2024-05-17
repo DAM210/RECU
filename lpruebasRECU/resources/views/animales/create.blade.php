@@ -3,7 +3,7 @@
 @section('contenido')
 
     <div class="grid grid-cols-2 gap-y-4 ml-10">
-        <form action="" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('animales.store')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-1">
                 <label>
