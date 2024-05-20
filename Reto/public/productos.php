@@ -64,7 +64,7 @@ echo '</pre>';*/
                 // Botón Vaciar desactivado
                 echo "<input type='submit' name='vaciar' id='vaciar' value='Vaciar' class='btn btn-primary disabled' style='background-color: #8BC34A;' disabled>";
                 // Botón Comprar desactivado
-                echo "<a href='cesta.php'> <button type='button' class='btn btn-primary disabled' style='background-color: #8BC34A;' disabled>Comprar</button></a>";
+                echo "<a href='cesta.php'><button type='button' class='btn btn-primary disabled' style='background-color: #8BC34A;' disabled>Comprar</button></a>";
             }
 
 

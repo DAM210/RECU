@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Animal;
 use App\Http\Requests\CrearAnimalRequest;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Exception;
 
 class AnimalController extends Controller
 {
@@ -101,7 +104,34 @@ class AnimalController extends Controller
      */
     public function store(CrearAnimalRequest $animalRequest)
     {
-        //
+        //$ruta = "assets/imagenesAnimales/";
+        try {
+            $animal = new Animal();        //Instancia del modelo Animal
+
+            //Asignamos el valor de todos los campos
+            $animal->especie = $animalRequest->input("especie");
+            $animal->peso = $animalRequest->input("peso");
+            $animal->slug = Str::slug($animalRequest->input("especie"));
+            $animal->altura = $animalRequest->input("altura");
+            $animal->fechaNacimiento = $animalRequest->input("fechaNacimiento");
+
+            $imagen = $animalRequest->file('imagen');
+            $nombreImagen = uniqid() . '_' . $imagen->getClientOriginalName();
+            $imagen->move(public_path('assets/imagenesAnimales/'), $nombreImagen);
+            $animal->imagen = $nombreImagen;
+
+            //$animalRequest["imagen"]->move($ruta, $animalRequest["imagen"]->getClientOriginalName());
+            $animal->alimentacion = $animalRequest->input("alimentacion");
+            $animal->descripcion = $animalRequest->input("descripcion");
+
+            //Los guardamos
+            $animal->save();
+
+            //Redirect a animales.show
+            return view("animales.show", ["animal" => $animal]);
+        } catch (Exception $e) {
+            echo ("Error" . $e);
+        }
     }
 
     /**
@@ -147,7 +177,54 @@ class AnimalController extends Controller
      */
     public function update(Animal $animal, Request $animalRequest)
     {
-        //
+        //Validamos los datos de entrada
+        $animalRequest->validate([
+            'especie' => 'required|min:3',
+            'peso' => 'required',
+            'altura' => 'required',
+            'fechaNacimiento' => 'required',
+            'alimentacion' => 'required',
+            'imagen' => 'required|image|mimes:jpg,png,jpge,svg'
+        ], [
+            "especie.required" => "La especie es obligatoria",
+            "peso.required" => "El peso es obligatorio",
+            "altura.required" => "La altura es obligatoria",
+            "fechaNacimiento.required" => "La fecha de nacimiento es obligatoria",
+            "imagen.required" => "La imagen es obligatoria",
+            "especie.min" => "El mínimo de caracteres de la especie debe ser 3",
+            "imagen.mimes" => "El formato del fichero debe ser jpeg, png, jpg o svg"
+        ]);
+
+        //$ruta = "assets/imagenesAnimales/";
+
+        //Actualizamos los datos
+        $animal->especie = $animalRequest->input("especie");
+        $animal->peso = $animalRequest->input("peso");
+        $animal->slug = Str::slug($animalRequest->input("especie"));
+        $animal->altura = $animalRequest->input("altura");
+        $animal->fechaNacimiento = $animalRequest->input("fechaNacimiento");
+
+        //!empty($animalRequest->imagen) && $animalRequest->imagen->isValid()
+        if ($animalRequest->hasFile('imagen')) {
+            //$imagen = $animalRequest->file('imagen');
+            //$nombreImagen=uniqid().'_'.$imagen->getClientOriginalName();
+            //$imagen->move(public_path('assets/imagenesAnimales'),$nombreImagen);
+
+            //Eliminamos imagen antigua y sustituimos por la nueva  (config/filesystems.php -> animales)
+            Storage::disk('animales')->delete($animal->imagen);
+
+            $animal->imagen = $animalRequest->imagen->store('', 'animales');
+
+            /*$animal->imagen = $animalRequest->input("imagen");
+			$AnimalRequest["imagen"]->move($ruta, $animalRequest["imagen"]->getClientOriginalName());*/
+        }
+
+        $animal->alimentacion = $animalRequest->input("alimentacion");
+        $animal->descripcion = $animalRequest->input("descripcion");
+
+        //Guardamos y redirigimos a animales.show
+        $animal->save();
+        return view("animales.show", ["animal" => $animal]);
     }
 
     /**

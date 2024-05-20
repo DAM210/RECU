@@ -44,9 +44,9 @@ Route::get('/',InicioController::class)->name('inicio');
 
 Route::controller(AnimalController::class)->group(function(){
     Route::get('animales', "index")->name("animales.index");
-    Route::get('animales/crear', "create")->name("animales.create");
+    Route::get('animales/crear', "create")->name("animales.create")->middleware('auth');
     Route::get('animales/{animal}', "show")->name("animales.show");
-    Route::get('animales/{animal}/editar', "edit")->name("animales.edit");
+    Route::get('animales/{animal}/editar', "edit")->name("animales.edit")->middleware('auth');
 
     Route::post('animales', "store")->name("animales.store");
     Route::put('animales/{animal}', "update")->name("animales.update");
