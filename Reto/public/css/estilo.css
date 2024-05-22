@@ -65,7 +65,7 @@ form select{
 }
 
 .form-group label {
-    margin-right: 10px; /* Ajusta el espacio entre el label y el select */
+    margin-right: 10px;
 }
 
 
@@ -129,7 +129,7 @@ form button:hover {
 }
 
 .product img {
-    max-height:300px;
+    max-height:200px;
     margin-right: 20px;
 }
 
