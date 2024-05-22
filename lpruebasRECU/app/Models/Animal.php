@@ -16,4 +16,21 @@ class Animal extends Model
         $fechaFormateada = Carbon::parse($this->fechaNacimiento);
         return $fechaFormateada->diffInYears(Carbon::now());
     }
+
+    //Relacion uno a muchos
+    public function revisiones()
+    {
+        return $this->hasMany(Revision::class);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+    //Relacion muchos a muchos
+    public function cuidadores()
+    {
+        return $this->belongsToMany(Cuidador::class);
+    }
 }

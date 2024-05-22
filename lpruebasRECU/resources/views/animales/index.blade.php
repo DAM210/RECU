@@ -24,6 +24,19 @@
             <li>Alimentación: <span class="font-light">{{$animal->alimentacion}}</span></li>
             <hr>
             <li>Descripción: <span class="font-light">{{$animal->descripcion}}</span></li>
+            <hr>
+            <li>Revisiones: <span class="font-light">{{ $animal->revisiones->count() }}</span></li>
+            <hr>
+            <li>Cuidadores: <span class="font-light">
+                    <ul>
+                        @foreach ($animal->cuidadores as $cuidador)
+                            <li>
+                                <a href="{{ route('cuidador.show', $cuidador) }}">{{ $cuidador->nombre }}</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </span>
+            </li>
         </ul>
     </div>
 </div>

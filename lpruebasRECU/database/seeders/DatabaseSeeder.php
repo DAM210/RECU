@@ -20,8 +20,19 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
+        DB::table("titulaciones")->delete();
+        \App\Models\Titulacion::factory(20)->create();
+
+        DB::table("animal_cuidador")->delete();
+
+        DB::table('cuidadores')->delete();
+        \App\Models\Cuidador::factory(20)->create();
+
         DB::table('animales')->delete();
         $this->call(AnimalSeeder::class);
+
+        DB::table('revisiones')->delete();
+        $this->call(RevisionSeeder::class);
 
         DB::table("users")->delete();
         $this->call(UserSeeder::class);

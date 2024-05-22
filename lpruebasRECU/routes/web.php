@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\RevisionController;
+use App\Http\Controllers\CuidadorController;
+use App\Http\Controllers\TitulacionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,9 +43,9 @@ Route::get('animales/{animal}/editar', function ($animal) {
 });
 */
 
-Route::get('/',InicioController::class)->name('inicio');
+Route::get('/', InicioController::class)->name('inicio');
 
-Route::controller(AnimalController::class)->group(function(){
+/*Route::controller(AnimalController::class)->group(function () {
     Route::get('animales', "index")->name("animales.index");
     Route::get('animales/crear', "create")->name("animales.create")->middleware('auth');
     Route::get('animales/{animal}', "show")->name("animales.show");
@@ -50,5 +53,26 @@ Route::controller(AnimalController::class)->group(function(){
 
     Route::post('animales', "store")->name("animales.store");
     Route::put('animales/{animal}', "update")->name("animales.update");
-    });
+});*/
 
+Route::resource('animales', AnimalController::class)->parameters([
+    'animales' => 'animal' // Cambia 'animales' a 'animal'
+]);
+
+Route::controller(RevisionController::class)->group(function () {
+    Route::get('/revisiones/{animal}/crear', "create")->name("animales.revision")->middleware("auth");
+    Route::post('/revisiones/{animal}', "store")->name("revision.store");
+});
+
+Route::get('/cuidadores/{cuidador}', [CuidadorController::class,'show'])->name('cuidador.show');
+Route::get('/titulaciones/{titulacion}',  [TitulacionController::class,'index'])->name("titulaciones.show");
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});
