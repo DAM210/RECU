@@ -1,0 +1,10 @@
+COMANDOS ARTISAN
+>php artisan make:model Imagen (para crear el modelo Imagen. Tambien para crear los modelos de familia y producto)
+>php artisan make:controller ProductoController -r (Para crear el controlador de Producto con los metodos index, create, show, edit...)
+>php artisan make:seed ProductoSeeder (Para crear las semillas de Producto)
+>php artisan make:migration create_productos_table (Para crear la migracion de la tabla productos)
+>php artisan migrate (Para crear las tablas)
+>php artisan db:seed (Para ejecutar DatabaseSeeder)
+>php artisan config:cache (Para que sea efectivo el cambio de idioma)
+>php artisan make:view productos.index (Para crear la vista index dentro de la carpeta productos)
+>php artisan make:request StoreProductoRequest (Para crear un request que haga las validaciones)
