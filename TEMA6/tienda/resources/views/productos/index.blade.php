@@ -1,6 +1,19 @@
 @extends('layouts.plantilla')
 @section('titulo','Tienda')
 @section('contenido')
+
+@if(Session::has('success'))
+    <div class="alert alert-success">
+        {{ Session::get('success') }}
+    </div>
+@endif
+
+@if(Session::has('error'))
+    <div class="alert alert-danger">
+        {{ Session::get('error') }}
+    </div>
+@endif
+
 <h1 class="text-3xl font-bold underline">Los productos de la tienda</h1>
 @foreach ($productos as $producto)
 <div class="grid grid-cols-3 gap-2">

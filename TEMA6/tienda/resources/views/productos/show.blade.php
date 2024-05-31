@@ -3,6 +3,19 @@
 @section('contenido')
 @csrf
 @method('delete')
+
+@if(Session::has('success'))
+    <div class="alert alert-success">
+        {{ Session::get('success') }}
+    </div>
+@endif
+
+@if(Session::has('error'))
+    <div class="alert alert-danger">
+        {{ Session::get('error') }}
+    </div>
+@endif
+
 <h1 class="text-3xl font-bold underline">Vista en detalle del producto</h1>
 
 <div class="grid grid-cols-3 gap-2">

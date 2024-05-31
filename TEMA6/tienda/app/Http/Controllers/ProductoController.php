@@ -60,7 +60,7 @@ class ProductoController extends Controller
             $producto->descripcion = $productoRequest->input("descripcion");
             $producto->save();
 
-            return view("productos.show", ["producto" => $producto]);
+            return redirect()->route('productos.show', $producto)->with('success', 'Producto creado con éxito.');
         } catch (Exception $e) {
             echo ("Error" . $e);
         }
