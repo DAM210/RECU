@@ -27,11 +27,13 @@ final class UpdateProductoController
     public function __invoke(int $id): void
     {
         $producto = new Producto();
-        
+        //$request=new ProductoRequest();
+
         // Verificar si el producto existe
         $productoExistente = $producto->find($id);
         if (!$productoExistente) {
             JsonResponse::response(data: ['error' => 'El producto no existe.'], httpCode: 404);
+
             return;
         }
 
@@ -39,7 +41,8 @@ final class UpdateProductoController
         $data = input()->all();
 
         // Actualizar el producto
-        $producto->update($id, $data);
+        //$producto->update(data:[id:$id, $data]);
+        $producto->update($id,$data);
 
         // Obtener el producto actualizado
         $productoActualizado = $producto->find($id);

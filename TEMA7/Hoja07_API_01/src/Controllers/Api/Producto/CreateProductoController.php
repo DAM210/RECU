@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Controllers\Api\Producto;
 
@@ -15,7 +15,6 @@ final class CreateProductoController
         $producto = new Producto();
         $request = new ProductoRequest();
         $productoId = $producto->create(
-
             data: $request->validated(),
         );
         JsonResponse::response(

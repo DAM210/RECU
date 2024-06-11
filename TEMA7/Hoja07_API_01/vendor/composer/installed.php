@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'lucia/dwes203',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => NULL,
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '4f3039adc35a27cb3c41a2b33885dcef51c6ef80',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -56,9 +56,9 @@
             'dev_requirement' => false,
         ),
         'lucia/dwes203' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => NULL,
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '4f3039adc35a27cb3c41a2b33885dcef51c6ef80',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

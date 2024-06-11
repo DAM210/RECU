@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Controllers\Api\Producto;
 
@@ -17,7 +17,7 @@ final class GetProductoController
         if ($productoEncontrado) {
             JsonResponse::response(data: $productoEncontrado);
         } else {
-            JsonResponse::response(data: [], httpCode: 404);
+            JsonResponse::response(data: ['message' => 'El producto no existe.'], httpCode: 404);
         }
     }
 }

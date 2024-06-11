@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Controllers\Api;
 
@@ -13,9 +13,9 @@ final class ApiController
         JsonResponse::response(
             data: [
                 'producto' => [
-                    'nombre' => 'producto 1',
+                    'nombre'      => 'producto 1',
                     'descripcion' => 'es un producto de prueba',
-                ]
+                ],
             ],
         );
     }

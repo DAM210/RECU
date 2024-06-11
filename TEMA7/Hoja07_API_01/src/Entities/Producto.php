@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace APP\Entities;
 
@@ -35,8 +35,7 @@ final class Producto
      */
     public function create(array $data): false|string
     {
-        $sql = 'INSERT INTO productos (nombre, descripcion, precio) VALUES (:nombre, :descripcion, :precio)
-                ';
+        $sql = 'INSERT INTO productos (nombre, descripcion, precio) VALUES (:nombre, :descripcion, :precio)';
         $stmt = $this->db->prepare(query: $sql);
         $stmt->execute(params: $data);
 
@@ -48,13 +47,14 @@ final class Producto
     public function get(): array
     {
         $stmt = $this->db->query('SELECT * FROM productos');
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $stmt->fetchAll(mode:PDO::FETCH_ASSOC);
     }
 
     public function find(int $id): ?array
     {
         $stmt = $this->db->prepare('SELECT * FROM productos WHERE id = :id');
-        $stmt->execute(['id' => $id]);
+        $stmt->execute(params:['id' => $id]);
         $producto = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $producto ?: null;
@@ -64,12 +64,14 @@ final class Producto
     {
         $sql = 'UPDATE productos SET nombre = :nombre, descripcion = :descripcion, precio = :precio WHERE id = :id';
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute(array_merge($data, ['id' => $id]));
+
+    return $stmt->execute(array_merge($data, ['id' => $id]));
     }
 
     public function delete(int $id): bool
     {
         $stmt = $this->db->prepare('DELETE FROM productos WHERE id = :id');
+
         return $stmt->execute(['id' => $id]);
     }
 }
